@@ -7,15 +7,16 @@ Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with [Z.ai](ht
 ## Install
 
 ```bash
-git clone https://github.com/user/claude-z.git
+git clone https://github.com/Glaveily/claude-z.git
 cd claude-z
 bash install.sh
 ```
 
-The installer asks 3 things:
+The installer asks 4 things:
 1. Your Z.ai API key ([get one here](https://z.ai/manage-apikey/apikey-list))
 2. Permission mode (normal / acceptEdits / dangerously-skip)
-3. Max output tokens (optional)
+3. Base model
+4. Max output tokens (optional)
 
 That's it. You're done.
 
@@ -44,10 +45,24 @@ claude-z reconfig
 |---|---|
 | `ANTHROPIC_AUTH_TOKEN` | Your Z.ai API key |
 | `ANTHROPIC_BASE_URL` | `https://api.z.ai/api/anthropic` |
+| `ANTHROPIC_DEFAULT_OPUS_MODEL` | Your chosen model (e.g. `glm-5`) |
+| `ANTHROPIC_DEFAULT_SONNET_MODEL` | Your chosen model (e.g. `glm-4.7`) |
+| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `glm-4.5-air` |
 | `API_TIMEOUT_MS` | `3000000` |
 | `CLAUDE_CODE_MAX_OUTPUT_TOKENS` | Your chosen value (if set) |
 
 Your regular `claude` command is **not affected** — it still uses Anthropic directly.
+
+## Available models
+
+| Model | Description | Plan |
+|---|---|---|
+| `glm-5` | Flagship, best quality, 744B MoE | Max only |
+| `glm-4.7` | Fast, great for coding (default) | All plans |
+| `glm-4.5` | Hybrid reasoning, thinking mode | All plans |
+| `glm-4.5-air` | Lightweight, cheapest | All plans |
+
+When you pick a model during setup, it maps to Claude Code's internal opus/sonnet/haiku slots. For example, choosing `glm-5` sets both opus and sonnet to `glm-5`, and haiku to `glm-4.5-air`.
 
 ## Requirements
 

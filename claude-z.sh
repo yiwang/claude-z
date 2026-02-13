@@ -43,6 +43,25 @@ if [[ "${1:-}" == "reconfig" ]]; then
     *) echo "  Invalid choice, keeping '$current_mode'" ;;
   esac
 
+  # Model
+  echo ""
+  echo "  Base model:"
+  echo "    1) glm-5        — flagship, best quality (Max plan only)"
+  echo "    2) glm-4.7      — fast, great for coding"
+  echo "    3) glm-4.5      — hybrid reasoning, thinking mode"
+  echo "    4) glm-4.5-air  — lightweight, cheapest"
+  echo ""
+  current_opus="${ZAI_MODEL_OPUS:-glm-4.7}"
+  read -rp "  Choose [1/2/3/4] (enter to keep '$current_opus'): " model_choice
+  case "$model_choice" in
+    1) current_opus="glm-5";     current_sonnet="glm-5";     current_haiku="glm-4.5-air" ;;
+    2) current_opus="glm-4.7";   current_sonnet="glm-4.7";   current_haiku="glm-4.5-air" ;;
+    3) current_opus="glm-4.5";   current_sonnet="glm-4.5";   current_haiku="glm-4.5-air" ;;
+    4) current_opus="glm-4.5-air"; current_sonnet="glm-4.5-air"; current_haiku="glm-4.5-air" ;;
+    "") current_sonnet="${ZAI_MODEL_SONNET:-$current_opus}"; current_haiku="${ZAI_MODEL_HAIKU:-glm-4.5-air}" ;;
+    *) echo "  Invalid choice, keeping current"; current_sonnet="${ZAI_MODEL_SONNET:-$current_opus}"; current_haiku="${ZAI_MODEL_HAIKU:-glm-4.5-air}" ;;
+  esac
+
   # Max tokens
   echo ""
   current_tokens="${ZAI_MAX_TOKENS:-}"
@@ -54,6 +73,9 @@ if [[ "${1:-}" == "reconfig" ]]; then
   cat > "$CONFIG_FILE" <<CONF
 ZAI_API_KEY="$current_key"
 ZAI_PERMISSION_MODE="$current_mode"
+ZAI_MODEL_OPUS="$current_opus"
+ZAI_MODEL_SONNET="$current_sonnet"
+ZAI_MODEL_HAIKU="$current_haiku"
 ZAI_MAX_TOKENS="$current_tokens"
 CONF
   chmod 600 "$CONFIG_FILE"
@@ -91,6 +113,9 @@ fi
 export ANTHROPIC_AUTH_TOKEN="$ZAI_API_KEY"
 export ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic"
 export API_TIMEOUT_MS="3000000"
+export ANTHROPIC_DEFAULT_OPUS_MODEL="${ZAI_MODEL_OPUS:-glm-4.7}"
+export ANTHROPIC_DEFAULT_SONNET_MODEL="${ZAI_MODEL_SONNET:-glm-4.7}"
+export ANTHROPIC_DEFAULT_HAIKU_MODEL="${ZAI_MODEL_HAIKU:-glm-4.5-air}"
 
 if [[ -n "${ZAI_MAX_TOKENS:-}" ]]; then
   export CLAUDE_CODE_MAX_OUTPUT_TOKENS="$ZAI_MAX_TOKENS"

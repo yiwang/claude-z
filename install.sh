@@ -51,7 +51,24 @@ case "${mode_choice:-1}" in
   *) echo "  Invalid choice, using 'normal'"; perm_mode="normal" ;;
 esac
 
-# 3. Max tokens
+# 3. Base model
+echo ""
+echo "  Base model (maps to opus/sonnet/haiku slots):"
+echo "    1) glm-5        — flagship, best quality (Max plan only)"
+echo "    2) glm-4.7      — fast, great for coding (default)"
+echo "    3) glm-4.5      — hybrid reasoning, thinking mode"
+echo "    4) glm-4.5-air  — lightweight, cheapest"
+echo ""
+read -rp "  Choose [1/2/3/4] (default: 2): " model_choice
+case "${model_choice:-2}" in
+  1) model_opus="glm-5";     model_sonnet="glm-5";     model_haiku="glm-4.5-air" ;;
+  2) model_opus="glm-4.7";   model_sonnet="glm-4.7";   model_haiku="glm-4.5-air" ;;
+  3) model_opus="glm-4.5";   model_sonnet="glm-4.5";   model_haiku="glm-4.5-air" ;;
+  4) model_opus="glm-4.5-air"; model_sonnet="glm-4.5-air"; model_haiku="glm-4.5-air" ;;
+  *) echo "  Invalid choice, using glm-4.7"; model_opus="glm-4.7"; model_sonnet="glm-4.7"; model_haiku="glm-4.5-air" ;;
+esac
+
+# 4. Max tokens
 echo ""
 read -rp "  Max output tokens (enter to skip, e.g. 64000): " max_tokens
 
@@ -60,6 +77,9 @@ mkdir -p "$CONFIG_DIR"
 cat > "$CONFIG_FILE" <<CONF
 ZAI_API_KEY="$api_key"
 ZAI_PERMISSION_MODE="$perm_mode"
+ZAI_MODEL_OPUS="$model_opus"
+ZAI_MODEL_SONNET="$model_sonnet"
+ZAI_MODEL_HAIKU="$model_haiku"
 ZAI_MAX_TOKENS="$max_tokens"
 CONF
 chmod 600 "$CONFIG_FILE"
