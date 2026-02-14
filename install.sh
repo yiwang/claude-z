@@ -9,7 +9,7 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 echo ""
 echo "  ┌─────────────────────────────────┐"
 echo "  │  claude-z installer             │"
-echo "  │  Claude Code + Z.ai provider    │"
+echo "  │  Claude Code + custom provider  │"
 echo "  └─────────────────────────────────┘"
 echo ""
 
@@ -27,16 +27,33 @@ echo ""
 
 # --- Setup wizard ---
 
-# 1. API key
-echo "  Get your Z.ai API key at: https://z.ai/manage-apikey/apikey-list"
+# 1. Provider
+echo "  Provider:"
+echo "    1) Z.ai       — GLM models, from \$6/mo"
+echo "    2) OpenRouter  — 400+ models, pay-per-token"
 echo ""
-read -rp "  Z.ai API key: " api_key
+read -rp "  Choose [1/2] (default: 1): " provider_choice
+case "${provider_choice:-1}" in
+  1) provider="zai" ;;
+  2) provider="openrouter" ;;
+  *) echo "  Invalid choice, using Z.ai"; provider="zai" ;;
+esac
+
+# 2. API key
+echo ""
+if [[ "$provider" == "zai" ]]; then
+  echo "  Get your Z.ai API key at: https://z.ai/manage-apikey/apikey-list"
+else
+  echo "  Get your OpenRouter API key at: https://openrouter.ai/settings/keys"
+fi
+echo ""
+read -rp "  API key: " api_key
 if [[ -z "$api_key" ]]; then
   echo "  Error: API key is required." >&2
   exit 1
 fi
 
-# 2. Permission mode
+# 3. Permission mode
 echo ""
 echo "  Permission mode:"
 echo "    1) normal           — ask before each action (safest)"
@@ -51,36 +68,53 @@ case "${mode_choice:-1}" in
   *) echo "  Invalid choice, using 'normal'"; perm_mode="normal" ;;
 esac
 
-# 3. Base model
+# 4. Model
 echo ""
-echo "  Base model (maps to opus/sonnet/haiku slots):"
-echo "    1) glm-5        — flagship, best quality (Max plan only)"
-echo "    2) glm-4.7      — fast, great for coding (default)"
-echo "    3) glm-4.5      — hybrid reasoning, thinking mode"
-echo "    4) glm-4.5-air  — lightweight, cheapest"
-echo ""
-read -rp "  Choose [1/2/3/4] (default: 2): " model_choice
-case "${model_choice:-2}" in
-  1) model_opus="glm-5";     model_sonnet="glm-5";     model_haiku="glm-4.5-air" ;;
-  2) model_opus="glm-4.7";   model_sonnet="glm-4.7";   model_haiku="glm-4.5-air" ;;
-  3) model_opus="glm-4.5";   model_sonnet="glm-4.5";   model_haiku="glm-4.5-air" ;;
-  4) model_opus="glm-4.5-air"; model_sonnet="glm-4.5-air"; model_haiku="glm-4.5-air" ;;
-  *) echo "  Invalid choice, using glm-4.7"; model_opus="glm-4.7"; model_sonnet="glm-4.7"; model_haiku="glm-4.5-air" ;;
-esac
+if [[ "$provider" == "zai" ]]; then
+  echo "  Base model:"
+  echo "    1) glm-5        — flagship, best quality (Max plan only)"
+  echo "    2) glm-4.7      — fast, great for coding (default)"
+  echo "    3) glm-4.5      — hybrid reasoning, thinking mode"
+  echo "    4) glm-4.5-air  — lightweight, cheapest"
+  echo ""
+  read -rp "  Choose [1/2/3/4] (default: 2): " model_choice
+  case "${model_choice:-2}" in
+    1) model_opus="glm-5";       model_sonnet="glm-5";       model_haiku="glm-4.5-air" ;;
+    2) model_opus="glm-4.7";     model_sonnet="glm-4.7";     model_haiku="glm-4.5-air" ;;
+    3) model_opus="glm-4.5";     model_sonnet="glm-4.5";     model_haiku="glm-4.5-air" ;;
+    4) model_opus="glm-4.5-air"; model_sonnet="glm-4.5-air"; model_haiku="glm-4.5-air" ;;
+    *) echo "  Invalid choice, using glm-4.7"; model_opus="glm-4.7"; model_sonnet="glm-4.7"; model_haiku="glm-4.5-air" ;;
+  esac
+else
+  echo "  Model for opus/sonnet slot (OpenRouter model ID)."
+  echo "  Browse: https://openrouter.ai/models"
+  echo ""
+  read -rp "  Model ID: " or_model
+  if [[ -z "$or_model" ]]; then
+    echo "  Error: model ID is required." >&2
+    exit 1
+  fi
+  model_opus="$or_model"
+  model_sonnet="$or_model"
+  echo ""
+  read -rp "  Haiku (light) model ID (enter to use same): " or_haiku
+  model_haiku="${or_haiku:-$or_model}"
+fi
 
-# 4. Max tokens
+# 5. Max tokens
 echo ""
 read -rp "  Max output tokens (enter to skip, e.g. 64000): " max_tokens
 
 # --- Save config ---
 mkdir -p "$CONFIG_DIR"
 cat > "$CONFIG_FILE" <<CONF
-ZAI_API_KEY="$api_key"
-ZAI_PERMISSION_MODE="$perm_mode"
-ZAI_MODEL_OPUS="$model_opus"
-ZAI_MODEL_SONNET="$model_sonnet"
-ZAI_MODEL_HAIKU="$model_haiku"
-ZAI_MAX_TOKENS="$max_tokens"
+CZ_PROVIDER="$provider"
+CZ_API_KEY="$api_key"
+CZ_PERMISSION_MODE="$perm_mode"
+CZ_MODEL_OPUS="$model_opus"
+CZ_MODEL_SONNET="$model_sonnet"
+CZ_MODEL_HAIKU="$model_haiku"
+CZ_MAX_TOKENS="$max_tokens"
 CONF
 chmod 600 "$CONFIG_FILE"
 
@@ -99,12 +133,15 @@ if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
   echo ""
 fi
 
+provider_name="Z.ai"
+[[ "$provider" == "openrouter" ]] && provider_name="OpenRouter"
+
 echo ""
 echo "  ────────────────────────────────────"
-echo "  Done! claude-z is ready to use."
+echo "  Done! claude-z is ready ($provider_name)."
 echo ""
 echo "  Usage:"
-echo "    claude-z                — start Claude Code via Z.ai"
+echo "    claude-z                — start Claude Code via $provider_name"
 echo "    claude-z reconfig       — change settings"
 echo "    claude-z -p \"prompt\"    — one-shot query"
 echo ""

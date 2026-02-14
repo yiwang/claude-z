@@ -1,6 +1,6 @@
 # claude-z
 
-Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with [Z.ai](https://z.ai) as the API provider — cheaper alternative using GLM models.
+Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with alternative API providers — [Z.ai](https://z.ai) or [OpenRouter](https://openrouter.ai).
 
 **One command to install. Zero dependencies. Pure bash.**
 
@@ -12,18 +12,19 @@ cd claude-z
 bash install.sh
 ```
 
-The installer asks 4 things:
-1. Your Z.ai API key ([get one here](https://z.ai/manage-apikey/apikey-list))
-2. Permission mode (normal / acceptEdits / dangerously-skip)
-3. Base model
-4. Max output tokens (optional)
+The installer asks 5 things:
+1. Provider (Z.ai or OpenRouter)
+2. API key
+3. Permission mode (normal / acceptEdits / dangerously-skip)
+4. Model
+5. Max output tokens (optional)
 
 That's it. You're done.
 
 ## Usage
 
 ```bash
-# Start Claude Code via Z.ai
+# Start Claude Code via your provider
 claude-z
 
 # One-shot prompt
@@ -37,23 +38,11 @@ claude-z --verbose
 claude-z reconfig
 ```
 
-## How it works
+## Providers
 
-`claude-z` is a thin wrapper around `claude`. It sets these environment variables and launches Claude Code:
+### Z.ai — GLM models, flat monthly pricing
 
-| Variable | Value |
-|---|---|
-| `ANTHROPIC_AUTH_TOKEN` | Your Z.ai API key |
-| `ANTHROPIC_BASE_URL` | `https://api.z.ai/api/anthropic` |
-| `ANTHROPIC_DEFAULT_OPUS_MODEL` | Your chosen model (e.g. `glm-5`) |
-| `ANTHROPIC_DEFAULT_SONNET_MODEL` | Your chosen model (e.g. `glm-4.7`) |
-| `ANTHROPIC_DEFAULT_HAIKU_MODEL` | `glm-4.5-air` |
-| `API_TIMEOUT_MS` | `3000000` |
-| `CLAUDE_CODE_MAX_OUTPUT_TOKENS` | Your chosen value (if set) |
-
-Your regular `claude` command is **not affected** — it still uses Anthropic directly.
-
-## Available models
+Plans from $6/mo. Get your key at [z.ai/manage-apikey](https://z.ai/manage-apikey/apikey-list).
 
 | Model | Description | Plan |
 |---|---|---|
@@ -62,12 +51,29 @@ Your regular `claude` command is **not affected** — it still uses Anthropic di
 | `glm-4.5` | Hybrid reasoning, thinking mode | All plans |
 | `glm-4.5-air` | Lightweight, cheapest | All plans |
 
-When you pick a model during setup, it maps to Claude Code's internal opus/sonnet/haiku slots. For example, choosing `glm-5` sets both opus and sonnet to `glm-5`, and haiku to `glm-4.5-air`.
+### OpenRouter — 400+ models, pay-per-token
+
+Use any model from [openrouter.ai/models](https://openrouter.ai/models). Get your key at [openrouter.ai/settings/keys](https://openrouter.ai/settings/keys).
+
+You type the model ID during setup.
+
+## How it works
+
+`claude-z` is a thin wrapper around `claude`. It sets environment variables and launches Claude Code:
+
+| Variable | Z.ai | OpenRouter |
+|---|---|---|
+| `ANTHROPIC_BASE_URL` | `https://api.z.ai/api/anthropic` | `https://openrouter.ai/api` |
+| `ANTHROPIC_AUTH_TOKEN` | Your Z.ai key | Your OpenRouter key |
+| `ANTHROPIC_API_KEY` | _(not set)_ | `""` (blank, required) |
+| `ANTHROPIC_DEFAULT_*_MODEL` | Your chosen GLM model | Your chosen model ID |
+
+Your regular `claude` command is **not affected** — it still uses Anthropic directly.
 
 ## Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed
-- A [Z.ai](https://z.ai) API key
+- A [Z.ai](https://z.ai) or [OpenRouter](https://openrouter.ai) API key
 - bash
 
 ## Uninstall
