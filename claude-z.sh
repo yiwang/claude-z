@@ -166,15 +166,9 @@ if [[ -n "${CZ_MAX_TOKENS:-}" ]]; then
   export CLAUDE_CODE_MAX_OUTPUT_TOKENS="$CZ_MAX_TOKENS"
 fi
 
-# Build args
-claude_args=()
-case "${CZ_PERMISSION_MODE:-normal}" in
-  dangerously-skip-permissions)
-    claude_args+=(--dangerously-skip-permissions)
-    ;;
-esac
-
-# Pass through user args
-claude_args+=("$@")
-
-exec claude "${claude_args[@]}"
+# Build args and exec
+if [[ "${CZ_PERMISSION_MODE:-normal}" == "dangerously-skip-permissions" ]]; then
+  exec claude --dangerously-skip-permissions "$@"
+else
+  exec claude "$@"
+fi
