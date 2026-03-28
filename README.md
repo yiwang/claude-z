@@ -2,14 +2,24 @@
 
 Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with alternative API providers — [Z.ai](https://z.ai) or [OpenRouter](https://openrouter.ai).
 
-**One command to install. Zero dependencies. Pure bash.**
+**One command to install. Zero dependencies.**
 
 ## Install
+
+### Linux / macOS
 
 ```bash
 git clone https://github.com/Glaveily/claude-z.git
 cd claude-z
 bash install.sh
+```
+
+### Windows (PowerShell)
+
+```powershell
+git clone https://github.com/Glaveily/claude-z.git
+cd claude-z
+powershell -ExecutionPolicy Bypass -File install.ps1
 ```
 
 The installer asks 5 things:
@@ -74,19 +84,32 @@ Your regular `claude` command is **not affected** — it still uses Anthropic di
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed
 - A [Z.ai](https://z.ai) or [OpenRouter](https://openrouter.ai) API key
-- bash
+- bash (Linux/macOS) or PowerShell (Windows)
 
 ## Uninstall
+
+### Linux / macOS
 
 ```bash
 bash uninstall.sh
 ```
 
-Removes `~/.local/bin/claude-z` and `~/.config/claude-z/`. Nothing else is touched.
+Removes `~/.local/bin/claude-z` and `~/.config/claude-z/`.
+
+### Windows
+
+```powershell
+powershell -ExecutionPolicy Bypass -File uninstall.ps1
+```
+
+Removes `%LOCALAPPDATA%\claude-z\` and `%APPDATA%\claude-z\`.
 
 ## Config
 
-Stored at `~/.config/claude-z/config` (chmod 600). Edit manually or run `claude-z reconfig`.
+- **Linux/macOS:** `~/.config/claude-z/config` (chmod 600)
+- **Windows:** `%APPDATA%\claude-z\config`
+
+Edit manually or run `claude-z reconfig`.
 
 ## License
 
