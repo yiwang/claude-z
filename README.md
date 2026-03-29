@@ -14,12 +14,12 @@ cd claude-z
 bash install.sh
 ```
 
-### Windows (PowerShell)
+### Windows
 
-```powershell
+```
 git clone https://github.com/Glaveily/claude-z.git
 cd claude-z
-powershell -ExecutionPolicy Bypass -File install.ps1
+install.cmd
 ```
 
 The installer asks 5 things:
@@ -98,8 +98,8 @@ Removes `~/.local/bin/claude-z` and `~/.config/claude-z/`.
 
 ### Windows
 
-```powershell
-powershell -ExecutionPolicy Bypass -File uninstall.ps1
+```
+uninstall.cmd
 ```
 
 Removes `%LOCALAPPDATA%\claude-z\` and `%APPDATA%\claude-z\`.
