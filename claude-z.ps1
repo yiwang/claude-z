@@ -98,15 +98,15 @@ if ($args.Count -gt 0 -and $args[0] -eq "reconfig") {
     $currentOpus = ""; $currentSonnet = ""; $currentHaiku = ""
     if ($currentProvider -eq "zai") {
         Write-Host "  Base model:"
-        Write-Host "    1) glm-5        -- flagship, best quality (Max plan only)"
+        Write-Host "    1) glm-5.1      -- flagship, best quality"
         Write-Host "    2) glm-4.7      -- fast, great for coding"
         Write-Host "    3) glm-4.5      -- hybrid reasoning, thinking mode"
         Write-Host "    4) glm-4.5-air  -- lightweight, cheapest"
         Write-Host ""
-        $currentOpus = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "glm-4.7" }
+        $currentOpus = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "glm-5.1" }
         $choice = Read-Host "  Choose [1/2/3/4] (enter to keep '$currentOpus')"
         switch ($choice) {
-            "1" { $currentOpus = "glm-5";       $currentSonnet = "glm-5";       $currentHaiku = "glm-4.5-air" }
+            "1" { $currentOpus = "glm-5.1";     $currentSonnet = "glm-5.1";     $currentHaiku = "glm-4.5-air" }
             "2" { $currentOpus = "glm-4.7";     $currentSonnet = "glm-4.7";     $currentHaiku = "glm-4.5-air" }
             "3" { $currentOpus = "glm-4.5";     $currentSonnet = "glm-4.5";     $currentHaiku = "glm-4.5-air" }
             "4" { $currentOpus = "glm-4.5-air"; $currentSonnet = "glm-4.5-air"; $currentHaiku = "glm-4.5-air" }
@@ -194,8 +194,8 @@ switch ($config.CZ_PROVIDER) {
 }
 
 $env:API_TIMEOUT_MS = "3000000"
-$env:ANTHROPIC_DEFAULT_OPUS_MODEL = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "glm-4.7" }
-$env:ANTHROPIC_DEFAULT_SONNET_MODEL = if ($config.CZ_MODEL_SONNET) { $config.CZ_MODEL_SONNET } else { "glm-4.7" }
+$env:ANTHROPIC_DEFAULT_OPUS_MODEL = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "glm-5.1" }
+$env:ANTHROPIC_DEFAULT_SONNET_MODEL = if ($config.CZ_MODEL_SONNET) { $config.CZ_MODEL_SONNET } else { "glm-5.1" }
 $env:ANTHROPIC_DEFAULT_HAIKU_MODEL = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-4.5-air" }
 
 if ($config.CZ_MAX_TOKENS) {

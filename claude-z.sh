@@ -67,15 +67,15 @@ if [[ "${1:-}" == "reconfig" ]]; then
   echo ""
   if [[ "$current_provider" == "zai" ]]; then
     echo "  Base model:"
-    echo "    1) glm-5        — flagship, best quality (Max plan only)"
+    echo "    1) glm-5.1      — flagship, best quality"
     echo "    2) glm-4.7      — fast, great for coding"
     echo "    3) glm-4.5      — hybrid reasoning, thinking mode"
     echo "    4) glm-4.5-air  — lightweight, cheapest"
     echo ""
-    current_opus="${CZ_MODEL_OPUS:-glm-4.7}"
+    current_opus="${CZ_MODEL_OPUS:-glm-5.1}"
     read -rp "  Choose [1/2/3/4] (enter to keep '$current_opus'): " model_choice
     case "$model_choice" in
-      1) current_opus="glm-5";       current_sonnet="glm-5";       current_haiku="glm-4.5-air" ;;
+      1) current_opus="glm-5.1";     current_sonnet="glm-5.1";     current_haiku="glm-4.5-air" ;;
       2) current_opus="glm-4.7";     current_sonnet="glm-4.7";     current_haiku="glm-4.5-air" ;;
       3) current_opus="glm-4.5";     current_sonnet="glm-4.5";     current_haiku="glm-4.5-air" ;;
       4) current_opus="glm-4.5-air"; current_sonnet="glm-4.5-air"; current_haiku="glm-4.5-air" ;;
@@ -158,8 +158,8 @@ case "${CZ_PROVIDER:-zai}" in
 esac
 
 export API_TIMEOUT_MS="3000000"
-export ANTHROPIC_DEFAULT_OPUS_MODEL="${CZ_MODEL_OPUS:-glm-4.7}"
-export ANTHROPIC_DEFAULT_SONNET_MODEL="${CZ_MODEL_SONNET:-glm-4.7}"
+export ANTHROPIC_DEFAULT_OPUS_MODEL="${CZ_MODEL_OPUS:-glm-5.1}"
+export ANTHROPIC_DEFAULT_SONNET_MODEL="${CZ_MODEL_SONNET:-glm-5.1}"
 export ANTHROPIC_DEFAULT_HAIKU_MODEL="${CZ_MODEL_HAIKU:-glm-4.5-air}"
 
 if [[ -n "${CZ_MAX_TOKENS:-}" ]]; then

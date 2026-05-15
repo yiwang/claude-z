@@ -72,18 +72,18 @@ esac
 echo ""
 if [[ "$provider" == "zai" ]]; then
   echo "  Base model:"
-  echo "    1) glm-5        — flagship, best quality (Max plan only)"
-  echo "    2) glm-4.7      — fast, great for coding (default)"
+  echo "    1) glm-5.1      — flagship, best quality (default)"
+  echo "    2) glm-4.7      — fast, great for coding"
   echo "    3) glm-4.5      — hybrid reasoning, thinking mode"
   echo "    4) glm-4.5-air  — lightweight, cheapest"
   echo ""
-  read -rp "  Choose [1/2/3/4] (default: 2): " model_choice
-  case "${model_choice:-2}" in
-    1) model_opus="glm-5";       model_sonnet="glm-5";       model_haiku="glm-4.5-air" ;;
+  read -rp "  Choose [1/2/3/4] (default: 1): " model_choice
+  case "${model_choice:-1}" in
+    1) model_opus="glm-5.1";     model_sonnet="glm-5.1";     model_haiku="glm-4.5-air" ;;
     2) model_opus="glm-4.7";     model_sonnet="glm-4.7";     model_haiku="glm-4.5-air" ;;
     3) model_opus="glm-4.5";     model_sonnet="glm-4.5";     model_haiku="glm-4.5-air" ;;
     4) model_opus="glm-4.5-air"; model_sonnet="glm-4.5-air"; model_haiku="glm-4.5-air" ;;
-    *) echo "  Invalid choice, using glm-4.7"; model_opus="glm-4.7"; model_sonnet="glm-4.7"; model_haiku="glm-4.5-air" ;;
+    *) echo "  Invalid choice, using glm-5.1"; model_opus="glm-5.1"; model_sonnet="glm-5.1"; model_haiku="glm-4.5-air" ;;
   esac
 else
   echo "  Model for opus/sonnet slot (OpenRouter model ID)."

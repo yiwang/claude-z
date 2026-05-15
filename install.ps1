@@ -74,19 +74,19 @@ switch ($choice) {
 Write-Host ""
 if ($provider -eq "zai") {
     Write-Host "  Base model:"
-    Write-Host "    1) glm-5        -- flagship, best quality (Max plan only)"
-    Write-Host "    2) glm-4.7      -- fast, great for coding (default)"
+    Write-Host "    1) glm-5.1      -- flagship, best quality (default)"
+    Write-Host "    2) glm-4.7      -- fast, great for coding"
     Write-Host "    3) glm-4.5      -- hybrid reasoning, thinking mode"
     Write-Host "    4) glm-4.5-air  -- lightweight, cheapest"
     Write-Host ""
-    $choice = Read-Host "  Choose [1/2/3/4] (default: 2)"
-    if (-not $choice) { $choice = "2" }
+    $choice = Read-Host "  Choose [1/2/3/4] (default: 1)"
+    if (-not $choice) { $choice = "1" }
     switch ($choice) {
-        "1" { $modelOpus = "glm-5";       $modelSonnet = "glm-5";       $modelHaiku = "glm-4.5-air" }
+        "1" { $modelOpus = "glm-5.1";     $modelSonnet = "glm-5.1";     $modelHaiku = "glm-4.5-air" }
         "2" { $modelOpus = "glm-4.7";     $modelSonnet = "glm-4.7";     $modelHaiku = "glm-4.5-air" }
         "3" { $modelOpus = "glm-4.5";     $modelSonnet = "glm-4.5";     $modelHaiku = "glm-4.5-air" }
         "4" { $modelOpus = "glm-4.5-air"; $modelSonnet = "glm-4.5-air"; $modelHaiku = "glm-4.5-air" }
-        default { Write-Host "  Invalid choice, using glm-4.7"; $modelOpus = "glm-4.7"; $modelSonnet = "glm-4.7"; $modelHaiku = "glm-4.5-air" }
+        default { Write-Host "  Invalid choice, using glm-5.1"; $modelOpus = "glm-5.1"; $modelSonnet = "glm-5.1"; $modelHaiku = "glm-4.5-air" }
     }
 } else {
     Write-Host "  Model for opus/sonnet slot (OpenRouter model ID)."

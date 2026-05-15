@@ -56,8 +56,8 @@ Plans from $6/mo. Get your key at [z.ai/manage-apikey](https://z.ai/manage-apike
 
 | Model | Description | Plan |
 |---|---|---|
-| `glm-5` | Flagship, best quality, 744B MoE | Max only |
-| `glm-4.7` | Fast, great for coding (default) | All plans |
+| `glm-5.1` | Flagship, best quality (default) | Max only |
+| `glm-4.7` | Fast, great for coding | All plans |
 | `glm-4.5` | Hybrid reasoning, thinking mode | All plans |
 | `glm-4.5-air` | Lightweight, cheapest | All plans |
 
