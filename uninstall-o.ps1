@@ -1,13 +1,13 @@
-# uninstall.ps1 — remove claude-z (Windows)
+# uninstall-o.ps1 — remove claude-o (Windows)
 $ErrorActionPreference = "Stop"
 
 Write-Host ""
-Write-Host "  Uninstalling claude-z..."
+Write-Host "  Uninstalling claude-o..."
 Write-Host ""
 
 $removed = 0
-$InstallDir = Join-Path $env:LOCALAPPDATA "claude-z"
-$ConfigDir = Join-Path $env:APPDATA "claude-z"
+$InstallDir = Join-Path $env:LOCALAPPDATA "claude-o"
+$ConfigDir = Join-Path $env:APPDATA "claude-o"
 
 if (Test-Path $InstallDir) {
     Remove-Item -Recurse -Force $InstallDir
@@ -30,9 +30,9 @@ if ($userPath -like "*$InstallDir*") {
 }
 
 if ($removed -eq 0) {
-    Write-Host "  Nothing to remove. claude-z was not installed."
+    Write-Host "  Nothing to remove. claude-o was not installed."
 } else {
     Write-Host ""
-    Write-Host "  Done. claude-z has been fully removed."
+    Write-Host "  Done. claude-o has been fully removed."
 }
 Write-Host ""

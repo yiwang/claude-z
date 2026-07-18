@@ -7,38 +7,19 @@ CONFIG_FILE="$CONFIG_DIR/config"
 # --- reconfig ---
 if [[ "${1:-}" == "reconfig" ]]; then
   echo ""
-  echo "  claude-z reconfig"
-  echo "  ─────────────────"
+  echo "  claude-z reconfig (Z.ai)"
+  echo "  ────────────────────────"
   echo ""
 
   [[ -f "$CONFIG_FILE" ]] && source "$CONFIG_FILE" 2>/dev/null
 
-  # Provider
-  current_provider="${CZ_PROVIDER:-zai}"
-  echo "  Provider:"
-  echo "    1) Z.ai       — GLM models, from \$6/mo"
-  echo "    2) OpenRouter  — 400+ models, pay-per-token"
-  echo ""
-  read -rp "  Choose [1/2] (enter to keep '$current_provider'): " provider_choice
-  case "$provider_choice" in
-    1) current_provider="zai" ;;
-    2) current_provider="openrouter" ;;
-    "") ;; # keep current
-    *) echo "  Invalid choice, keeping '$current_provider'" ;;
-  esac
-
   # API key
-  echo ""
   current_key="${CZ_API_KEY:-}"
   if [[ -n "$current_key" ]]; then
     masked="${current_key:0:8}...${current_key: -4}"
     echo "  Current API key: $masked"
   fi
-  if [[ "$current_provider" == "zai" ]]; then
-    echo "  Get key: https://z.ai/manage-apikey/apikey-list"
-  else
-    echo "  Get key: https://openrouter.ai/settings/keys"
-  fi
+  echo "  Get key: https://z.ai/manage-apikey/apikey-list"
   read -rp "  API key (enter to keep current): " new_key
   [[ -n "$new_key" ]] && current_key="$new_key"
   if [[ -z "$current_key" ]]; then
@@ -65,36 +46,22 @@ if [[ "${1:-}" == "reconfig" ]]; then
 
   # Model
   echo ""
-  if [[ "$current_provider" == "zai" ]]; then
-    echo "  Base model:"
-    echo "    1) glm-5.1      — flagship, best quality"
-    echo "    2) glm-4.7      — fast, great for coding"
-    echo "    3) glm-4.5      — hybrid reasoning, thinking mode"
-    echo "    4) glm-4.5-air  — lightweight, cheapest"
-    echo ""
-    current_opus="${CZ_MODEL_OPUS:-glm-5.1}"
-    read -rp "  Choose [1/2/3/4] (enter to keep '$current_opus'): " model_choice
-    case "$model_choice" in
-      1) current_opus="glm-5.1";     current_sonnet="glm-5.1";     current_haiku="glm-4.5-air" ;;
-      2) current_opus="glm-4.7";     current_sonnet="glm-4.7";     current_haiku="glm-4.5-air" ;;
-      3) current_opus="glm-4.5";     current_sonnet="glm-4.5";     current_haiku="glm-4.5-air" ;;
-      4) current_opus="glm-4.5-air"; current_sonnet="glm-4.5-air"; current_haiku="glm-4.5-air" ;;
-      "") current_sonnet="${CZ_MODEL_SONNET:-$current_opus}"; current_haiku="${CZ_MODEL_HAIKU:-glm-4.5-air}" ;;
-      *) echo "  Invalid, keeping current"; current_sonnet="${CZ_MODEL_SONNET:-$current_opus}"; current_haiku="${CZ_MODEL_HAIKU:-glm-4.5-air}" ;;
-    esac
-  else
-    current_opus="${CZ_MODEL_OPUS:-}"
-    echo "  Model for opus/sonnet slot (OpenRouter model ID)."
-    echo "  Browse: https://openrouter.ai/models"
-    echo ""
-    read -rp "  Model ID (enter to keep '$current_opus'): " or_model
-    [[ -n "$or_model" ]] && current_opus="$or_model"
-    current_sonnet="$current_opus"
-    echo ""
-    current_haiku="${CZ_MODEL_HAIKU:-$current_opus}"
-    read -rp "  Haiku (light) model (enter to keep '$current_haiku'): " or_haiku
-    [[ -n "$or_haiku" ]] && current_haiku="$or_haiku"
-  fi
+  echo "  Base model:"
+  echo "    1) glm-5.2[1m]  — flagship, 1M context"
+  echo "    2) glm-5.2      — flagship, standard context"
+  echo "    3) glm-4.7      — fast, great for coding"
+  echo "    4) glm-4.5-air  — lightweight, cheapest"
+  echo ""
+  current_opus="${CZ_MODEL_OPUS:-glm-5.2[1m]}"
+  read -rp "  Choose [1/2/3/4] (enter to keep '$current_opus'): " model_choice
+  case "$model_choice" in
+    1) current_opus="glm-5.2[1m]"; current_sonnet="glm-5.2[1m]"; current_haiku="glm-4.7" ;;
+    2) current_opus="glm-5.2";     current_sonnet="glm-5.2";     current_haiku="glm-4.7" ;;
+    3) current_opus="glm-4.7";     current_sonnet="glm-4.7";     current_haiku="glm-4.7" ;;
+    4) current_opus="glm-4.5-air"; current_sonnet="glm-4.5-air"; current_haiku="glm-4.5-air" ;;
+    "") current_sonnet="${CZ_MODEL_SONNET:-$current_opus}"; current_haiku="${CZ_MODEL_HAIKU:-glm-4.7}" ;;
+    *) echo "  Invalid, keeping current"; current_sonnet="${CZ_MODEL_SONNET:-$current_opus}"; current_haiku="${CZ_MODEL_HAIKU:-glm-4.7}" ;;
+  esac
 
   # Max tokens
   echo ""
@@ -105,7 +72,6 @@ if [[ "${1:-}" == "reconfig" ]]; then
   # Save
   mkdir -p "$CONFIG_DIR"
   cat > "$CONFIG_FILE" <<CONF
-CZ_PROVIDER="$current_provider"
 CZ_API_KEY="$current_key"
 CZ_PERMISSION_MODE="$current_mode"
 CZ_MODEL_OPUS="$current_opus"
@@ -144,23 +110,19 @@ if ! command -v claude &>/dev/null; then
   exit 1
 fi
 
-# Build env per provider
-case "${CZ_PROVIDER:-zai}" in
-  openrouter)
-    export ANTHROPIC_BASE_URL="https://openrouter.ai/api"
-    export ANTHROPIC_AUTH_TOKEN="$CZ_API_KEY"
-    export ANTHROPIC_API_KEY=""
-    ;;
-  *)
-    export ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic"
-    export ANTHROPIC_AUTH_TOKEN="$CZ_API_KEY"
-    ;;
-esac
+export ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic"
+export ANTHROPIC_AUTH_TOKEN="$CZ_API_KEY"
 
 export API_TIMEOUT_MS="3000000"
-export ANTHROPIC_DEFAULT_OPUS_MODEL="${CZ_MODEL_OPUS:-glm-5.1}"
-export ANTHROPIC_DEFAULT_SONNET_MODEL="${CZ_MODEL_SONNET:-glm-5.1}"
-export ANTHROPIC_DEFAULT_HAIKU_MODEL="${CZ_MODEL_HAIKU:-glm-4.5-air}"
+export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1"
+export ANTHROPIC_DEFAULT_OPUS_MODEL="${CZ_MODEL_OPUS:-glm-5.2[1m]}"
+export ANTHROPIC_DEFAULT_SONNET_MODEL="${CZ_MODEL_SONNET:-glm-5.2[1m]}"
+export ANTHROPIC_DEFAULT_HAIKU_MODEL="${CZ_MODEL_HAIKU:-glm-4.7}"
+
+# Opt into the 1M context window for [1m] model variants
+if [[ "${CZ_MODEL_OPUS:-}" == *"[1m]"* ]]; then
+  export CLAUDE_CODE_AUTO_COMPACT_WINDOW="1000000"
+fi
 
 if [[ -n "${CZ_MAX_TOKENS:-}" ]]; then
   export CLAUDE_CODE_MAX_OUTPUT_TOKENS="$CZ_MAX_TOKENS"

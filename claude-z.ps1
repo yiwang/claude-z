@@ -1,4 +1,4 @@
-# claude-z.ps1 — Claude Code with alternative API providers (Windows)
+# claude-z.ps1 — Claude Code with Z.ai API backend (Windows)
 $ErrorActionPreference = "Stop"
 
 $ConfigDir = Join-Path $env:APPDATA "claude-z"
@@ -22,7 +22,6 @@ function Save-CzConfig {
         New-Item -ItemType Directory -Path $ConfigDir -Force | Out-Null
     }
     @"
-CZ_PROVIDER="$($c.CZ_PROVIDER)"
 CZ_API_KEY="$($c.CZ_API_KEY)"
 CZ_PERMISSION_MODE="$($c.CZ_PERMISSION_MODE)"
 CZ_MODEL_OPUS="$($c.CZ_MODEL_OPUS)"
@@ -41,22 +40,7 @@ if ($args.Count -gt 0 -and $args[0] -eq "reconfig") {
 
     $config = Read-CzConfig
 
-    # Provider
-    $currentProvider = if ($config.CZ_PROVIDER) { $config.CZ_PROVIDER } else { "zai" }
-    Write-Host "  Provider:"
-    Write-Host "    1) Z.ai       -- GLM models, from `$6/mo"
-    Write-Host "    2) OpenRouter  -- 400+ models, pay-per-token"
-    Write-Host ""
-    $choice = Read-Host "  Choose [1/2] (enter to keep '$currentProvider')"
-    switch ($choice) {
-        "1" { $currentProvider = "zai" }
-        "2" { $currentProvider = "openrouter" }
-        "" { }
-        default { Write-Host "  Invalid choice, keeping '$currentProvider'" }
-    }
-
     # API key
-    Write-Host ""
     $currentKey = if ($config.CZ_API_KEY) { $config.CZ_API_KEY } else { "" }
     if ($currentKey) {
         $maskLen = [Math]::Min(8, $currentKey.Length)
@@ -64,11 +48,7 @@ if ($args.Count -gt 0 -and $args[0] -eq "reconfig") {
         $masked = $currentKey.Substring(0, $maskLen) + "..." + $currentKey.Substring($tailStart)
         Write-Host "  Current API key: $masked"
     }
-    if ($currentProvider -eq "zai") {
-        Write-Host "  Get key: https://z.ai/manage-apikey/apikey-list"
-    } else {
-        Write-Host "  Get key: https://openrouter.ai/settings/keys"
-    }
+    Write-Host "  Get key: https://z.ai/manage-apikey/apikey-list"
     $newKey = Read-Host "  API key (enter to keep current)"
     if ($newKey) { $currentKey = $newKey }
     if (-not $currentKey) {
@@ -95,43 +75,29 @@ if ($args.Count -gt 0 -and $args[0] -eq "reconfig") {
 
     # Model
     Write-Host ""
-    $currentOpus = ""; $currentSonnet = ""; $currentHaiku = ""
-    if ($currentProvider -eq "zai") {
-        Write-Host "  Base model:"
-        Write-Host "    1) glm-5.1      -- flagship, best quality"
-        Write-Host "    2) glm-4.7      -- fast, great for coding"
-        Write-Host "    3) glm-4.5      -- hybrid reasoning, thinking mode"
-        Write-Host "    4) glm-4.5-air  -- lightweight, cheapest"
-        Write-Host ""
-        $currentOpus = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "glm-5.1" }
-        $choice = Read-Host "  Choose [1/2/3/4] (enter to keep '$currentOpus')"
-        switch ($choice) {
-            "1" { $currentOpus = "glm-5.1";     $currentSonnet = "glm-5.1";     $currentHaiku = "glm-4.5-air" }
-            "2" { $currentOpus = "glm-4.7";     $currentSonnet = "glm-4.7";     $currentHaiku = "glm-4.5-air" }
-            "3" { $currentOpus = "glm-4.5";     $currentSonnet = "glm-4.5";     $currentHaiku = "glm-4.5-air" }
-            "4" { $currentOpus = "glm-4.5-air"; $currentSonnet = "glm-4.5-air"; $currentHaiku = "glm-4.5-air" }
-            "" {
-                $currentSonnet = if ($config.CZ_MODEL_SONNET) { $config.CZ_MODEL_SONNET } else { $currentOpus }
-                $currentHaiku = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-4.5-air" }
-            }
-            default {
-                Write-Host "  Invalid, keeping current"
-                $currentSonnet = if ($config.CZ_MODEL_SONNET) { $config.CZ_MODEL_SONNET } else { $currentOpus }
-                $currentHaiku = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-4.5-air" }
-            }
+    Write-Host "  Base model:"
+    Write-Host "    1) glm-5.2[1m]  -- flagship, 1M context (default)"
+    Write-Host "    2) glm-5.2      -- flagship, standard context"
+    Write-Host "    3) glm-4.7      -- fast, great for coding"
+    Write-Host "    4) glm-4.5-air  -- lightweight, cheapest"
+    Write-Host ""
+    $currentOpus = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "glm-5.2[1m]" }
+    $currentSonnet = ""; $currentHaiku = ""
+    $choice = Read-Host "  Choose [1/2/3/4] (enter to keep '$currentOpus')"
+    switch ($choice) {
+        "1" { $currentOpus = "glm-5.2[1m]"; $currentSonnet = "glm-5.2[1m]"; $currentHaiku = "glm-4.7" }
+        "2" { $currentOpus = "glm-5.2";     $currentSonnet = "glm-5.2";     $currentHaiku = "glm-4.7" }
+        "3" { $currentOpus = "glm-4.7";     $currentSonnet = "glm-4.7";     $currentHaiku = "glm-4.7" }
+        "4" { $currentOpus = "glm-4.5-air"; $currentSonnet = "glm-4.5-air"; $currentHaiku = "glm-4.5-air" }
+        "" {
+            $currentSonnet = if ($config.CZ_MODEL_SONNET) { $config.CZ_MODEL_SONNET } else { $currentOpus }
+            $currentHaiku = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-4.7" }
         }
-    } else {
-        $currentOpus = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "" }
-        Write-Host "  Model for opus/sonnet slot (OpenRouter model ID)."
-        Write-Host "  Browse: https://openrouter.ai/models"
-        Write-Host ""
-        $orModel = Read-Host "  Model ID (enter to keep '$currentOpus')"
-        if ($orModel) { $currentOpus = $orModel }
-        $currentSonnet = $currentOpus
-        Write-Host ""
-        $currentHaiku = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { $currentOpus }
-        $orHaiku = Read-Host "  Haiku (light) model (enter to keep '$currentHaiku')"
-        if ($orHaiku) { $currentHaiku = $orHaiku }
+        default {
+            Write-Host "  Invalid choice, keeping '$currentOpus'"
+            $currentSonnet = if ($config.CZ_MODEL_SONNET) { $config.CZ_MODEL_SONNET } else { $currentOpus }
+            $currentHaiku = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-4.7" }
+        }
     }
 
     # Max tokens
@@ -142,13 +108,12 @@ if ($args.Count -gt 0 -and $args[0] -eq "reconfig") {
 
     # Save
     Save-CzConfig @{
-        CZ_PROVIDER        = $currentProvider
-        CZ_API_KEY          = $currentKey
-        CZ_PERMISSION_MODE  = $currentMode
-        CZ_MODEL_OPUS       = $currentOpus
-        CZ_MODEL_SONNET     = $currentSonnet
-        CZ_MODEL_HAIKU      = $currentHaiku
-        CZ_MAX_TOKENS       = $currentTokens
+        CZ_API_KEY         = $currentKey
+        CZ_PERMISSION_MODE = $currentMode
+        CZ_MODEL_OPUS      = $currentOpus
+        CZ_MODEL_SONNET    = $currentSonnet
+        CZ_MODEL_HAIKU     = $currentHaiku
+        CZ_MAX_TOKENS      = $currentTokens
     }
 
     Write-Host ""
@@ -180,23 +145,21 @@ if (-not (Get-Command claude -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-# Build env per provider
-switch ($config.CZ_PROVIDER) {
-    "openrouter" {
-        $env:ANTHROPIC_BASE_URL = "https://openrouter.ai/api"
-        $env:ANTHROPIC_AUTH_TOKEN = $config.CZ_API_KEY
-        $env:ANTHROPIC_API_KEY = ""
-    }
-    default {
-        $env:ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic"
-        $env:ANTHROPIC_AUTH_TOKEN = $config.CZ_API_KEY
-    }
-}
+$env:ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic"
+$env:ANTHROPIC_AUTH_TOKEN = $config.CZ_API_KEY
 
 $env:API_TIMEOUT_MS = "3000000"
-$env:ANTHROPIC_DEFAULT_OPUS_MODEL = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "glm-5.1" }
-$env:ANTHROPIC_DEFAULT_SONNET_MODEL = if ($config.CZ_MODEL_SONNET) { $config.CZ_MODEL_SONNET } else { "glm-5.1" }
-$env:ANTHROPIC_DEFAULT_HAIKU_MODEL = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-4.5-air" }
+$env:CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1"
+
+$modelOpus = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "glm-5.2[1m]" }
+$env:ANTHROPIC_DEFAULT_OPUS_MODEL = $modelOpus
+$env:ANTHROPIC_DEFAULT_SONNET_MODEL = if ($config.CZ_MODEL_SONNET) { $config.CZ_MODEL_SONNET } else { "glm-5.2[1m]" }
+$env:ANTHROPIC_DEFAULT_HAIKU_MODEL = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-4.7" }
+
+# Models with a 1M context window get a larger auto-compact window
+if ($modelOpus.Contains("[1m]")) {
+    $env:CLAUDE_CODE_AUTO_COMPACT_WINDOW = "1000000"
+}
 
 if ($config.CZ_MAX_TOKENS) {
     $env:CLAUDE_CODE_MAX_OUTPUT_TOKENS = $config.CZ_MAX_TOKENS
