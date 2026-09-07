@@ -47,20 +47,18 @@ if [[ "${1:-}" == "reconfig" ]]; then
   # Model
   echo ""
   echo "  Base model:"
-  echo "    1) glm-5.2[1m]  — flagship, 1M context"
-  echo "    2) glm-5.2      — flagship, standard context"
-  echo "    3) glm-4.7      — fast, great for coding"
-  echo "    4) glm-4.5-air  — lightweight, cheapest"
+  echo "    1) glm-5.3[1m]     — flagship, 1M context (default)"
+  echo "    2) glm-5.3-flash   — fast, multimodal, cheapest"
+  echo "    3) glm-4.7         — fast, great for coding"
   echo ""
-  current_opus="${CZ_MODEL_OPUS:-glm-5.2[1m]}"
-  read -rp "  Choose [1/2/3/4] (enter to keep '$current_opus'): " model_choice
+  current_opus="${CZ_MODEL_OPUS:-glm-5.3[1m]}"
+  read -rp "  Choose [1/2/3] (enter to keep '$current_opus'): " model_choice
   case "$model_choice" in
-    1) current_opus="glm-5.2[1m]"; current_sonnet="glm-5.2[1m]"; current_haiku="glm-4.7" ;;
-    2) current_opus="glm-5.2";     current_sonnet="glm-5.2";     current_haiku="glm-4.7" ;;
-    3) current_opus="glm-4.7";     current_sonnet="glm-4.7";     current_haiku="glm-4.7" ;;
-    4) current_opus="glm-4.5-air"; current_sonnet="glm-4.5-air"; current_haiku="glm-4.5-air" ;;
-    "") current_sonnet="${CZ_MODEL_SONNET:-$current_opus}"; current_haiku="${CZ_MODEL_HAIKU:-glm-4.7}" ;;
-    *) echo "  Invalid, keeping current"; current_sonnet="${CZ_MODEL_SONNET:-$current_opus}"; current_haiku="${CZ_MODEL_HAIKU:-glm-4.7}" ;;
+    1) current_opus="glm-5.3[1m]";   current_sonnet="glm-5.3[1m]";   current_haiku="glm-5.3-flash" ;;
+    2) current_opus="glm-5.3-flash"; current_sonnet="glm-5.3-flash"; current_haiku="glm-5.3-flash" ;;
+    3) current_opus="glm-4.7";       current_sonnet="glm-4.7";       current_haiku="glm-4.7" ;;
+    "") current_sonnet="${CZ_MODEL_SONNET:-$current_opus}"; current_haiku="${CZ_MODEL_HAIKU:-glm-5.3-flash}" ;;
+    *) echo "  Invalid, keeping current"; current_sonnet="${CZ_MODEL_SONNET:-$current_opus}"; current_haiku="${CZ_MODEL_HAIKU:-glm-5.3-flash}" ;;
   esac
 
   # Max tokens
@@ -115,9 +113,9 @@ export ANTHROPIC_AUTH_TOKEN="$CZ_API_KEY"
 
 export API_TIMEOUT_MS="3000000"
 export CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC="1"
-export ANTHROPIC_DEFAULT_OPUS_MODEL="${CZ_MODEL_OPUS:-glm-5.2[1m]}"
-export ANTHROPIC_DEFAULT_SONNET_MODEL="${CZ_MODEL_SONNET:-glm-5.2[1m]}"
-export ANTHROPIC_DEFAULT_HAIKU_MODEL="${CZ_MODEL_HAIKU:-glm-4.7}"
+export ANTHROPIC_DEFAULT_OPUS_MODEL="${CZ_MODEL_OPUS:-glm-5.3[1m]}"
+export ANTHROPIC_DEFAULT_SONNET_MODEL="${CZ_MODEL_SONNET:-glm-5.3[1m]}"
+export ANTHROPIC_DEFAULT_HAIKU_MODEL="${CZ_MODEL_HAIKU:-glm-5.3-flash}"
 
 # Opt into the 1M context window for [1m] model variants
 if [[ "${CZ_MODEL_OPUS:-}" == *"[1m]"* ]]; then

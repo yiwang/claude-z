@@ -76,27 +76,25 @@ if ($args.Count -gt 0 -and $args[0] -eq "reconfig") {
     # Model
     Write-Host ""
     Write-Host "  Base model:"
-    Write-Host "    1) glm-5.2[1m]  -- flagship, 1M context (default)"
-    Write-Host "    2) glm-5.2      -- flagship, standard context"
-    Write-Host "    3) glm-4.7      -- fast, great for coding"
-    Write-Host "    4) glm-4.5-air  -- lightweight, cheapest"
+    Write-Host "    1) glm-5.3[1m]     -- flagship, 1M context (default)"
+    Write-Host "    2) glm-5.3-flash   -- fast, multimodal, cheapest"
+    Write-Host "    3) glm-4.7         -- fast, great for coding"
     Write-Host ""
-    $currentOpus = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "glm-5.2[1m]" }
+    $currentOpus = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "glm-5.3[1m]" }
     $currentSonnet = ""; $currentHaiku = ""
-    $choice = Read-Host "  Choose [1/2/3/4] (enter to keep '$currentOpus')"
+    $choice = Read-Host "  Choose [1/2/3] (enter to keep '$currentOpus')"
     switch ($choice) {
-        "1" { $currentOpus = "glm-5.2[1m]"; $currentSonnet = "glm-5.2[1m]"; $currentHaiku = "glm-4.7" }
-        "2" { $currentOpus = "glm-5.2";     $currentSonnet = "glm-5.2";     $currentHaiku = "glm-4.7" }
-        "3" { $currentOpus = "glm-4.7";     $currentSonnet = "glm-4.7";     $currentHaiku = "glm-4.7" }
-        "4" { $currentOpus = "glm-4.5-air"; $currentSonnet = "glm-4.5-air"; $currentHaiku = "glm-4.5-air" }
+        "1" { $currentOpus = "glm-5.3[1m]";   $currentSonnet = "glm-5.3[1m]";   $currentHaiku = "glm-5.3-flash" }
+        "2" { $currentOpus = "glm-5.3-flash"; $currentSonnet = "glm-5.3-flash"; $currentHaiku = "glm-5.3-flash" }
+        "3" { $currentOpus = "glm-4.7";       $currentSonnet = "glm-4.7";       $currentHaiku = "glm-4.7" }
         "" {
             $currentSonnet = if ($config.CZ_MODEL_SONNET) { $config.CZ_MODEL_SONNET } else { $currentOpus }
-            $currentHaiku = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-4.7" }
+            $currentHaiku = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-5.3-flash" }
         }
         default {
             Write-Host "  Invalid choice, keeping '$currentOpus'"
             $currentSonnet = if ($config.CZ_MODEL_SONNET) { $config.CZ_MODEL_SONNET } else { $currentOpus }
-            $currentHaiku = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-4.7" }
+            $currentHaiku = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-5.3-flash" }
         }
     }
 
@@ -151,10 +149,10 @@ $env:ANTHROPIC_AUTH_TOKEN = $config.CZ_API_KEY
 $env:API_TIMEOUT_MS = "3000000"
 $env:CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1"
 
-$modelOpus = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "glm-5.2[1m]" }
+$modelOpus = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "glm-5.3[1m]" }
 $env:ANTHROPIC_DEFAULT_OPUS_MODEL = $modelOpus
-$env:ANTHROPIC_DEFAULT_SONNET_MODEL = if ($config.CZ_MODEL_SONNET) { $config.CZ_MODEL_SONNET } else { "glm-5.2[1m]" }
-$env:ANTHROPIC_DEFAULT_HAIKU_MODEL = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-4.7" }
+$env:ANTHROPIC_DEFAULT_SONNET_MODEL = if ($config.CZ_MODEL_SONNET) { $config.CZ_MODEL_SONNET } else { "glm-5.3[1m]" }
+$env:ANTHROPIC_DEFAULT_HAIKU_MODEL = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-5.3-flash" }
 
 # Models with a 1M context window get a larger auto-compact window
 if ($modelOpus.Contains("[1m]")) {

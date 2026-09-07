@@ -54,18 +54,16 @@ esac
 # 3. Model
 echo ""
 echo "  Base model:"
-echo "    1) glm-5.2[1m]  — flagship, 1M context (default)"
-echo "    2) glm-5.2      — flagship, standard context"
-echo "    3) glm-4.7      — fast, great for coding"
-echo "    4) glm-4.5-air  — lightweight, cheapest"
+echo "    1) glm-5.3[1m]     — flagship, 1M context (default)"
+echo "    2) glm-5.3-flash   — fast, multimodal, cheapest"
+echo "    3) glm-4.7         — fast, great for coding"
 echo ""
-read -rp "  Choose [1/2/3/4] (default: 1): " model_choice
+read -rp "  Choose [1/2/3] (default: 1): " model_choice
 case "${model_choice:-1}" in
-  1) model_opus="glm-5.2[1m]"; model_sonnet="glm-5.2[1m]"; model_haiku="glm-4.7" ;;
-  2) model_opus="glm-5.2";     model_sonnet="glm-5.2";     model_haiku="glm-4.7" ;;
-  3) model_opus="glm-4.7";     model_sonnet="glm-4.7";     model_haiku="glm-4.7" ;;
-  4) model_opus="glm-4.5-air"; model_sonnet="glm-4.5-air"; model_haiku="glm-4.5-air" ;;
-  *) echo "  Invalid choice, using glm-5.2[1m]"; model_opus="glm-5.2[1m]"; model_sonnet="glm-5.2[1m]"; model_haiku="glm-4.7" ;;
+  1) model_opus="glm-5.3[1m]";   model_sonnet="glm-5.3[1m]";   model_haiku="glm-5.3-flash" ;;
+  2) model_opus="glm-5.3-flash"; model_sonnet="glm-5.3-flash"; model_haiku="glm-5.3-flash" ;;
+  3) model_opus="glm-4.7";       model_sonnet="glm-4.7";       model_haiku="glm-4.7" ;;
+  *) echo "  Invalid choice, using glm-5.3[1m]"; model_opus="glm-5.3[1m]"; model_sonnet="glm-5.3[1m]"; model_haiku="glm-5.3-flash" ;;
 esac
 
 # 4. Max tokens

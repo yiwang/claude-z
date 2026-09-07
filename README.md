@@ -8,7 +8,7 @@ Each provider gets its own command, its own installer, and its own config file. 
 
 | Command | Provider | Default model |
 |---|---|---|
-| `claude-z` | Z.ai | `glm-5.2[1m]` (1M context) |
+| `claude-z` | Z.ai | `glm-5.3[1m]` (1M context) |
 | `claude-o` | OpenRouter | any model ID you choose |
 | `claude-k` | Kimi | `k3[1m]` (1M context) |
 
@@ -70,12 +70,11 @@ Plans from $6/mo. Get your key at [z.ai/manage-apikey](https://z.ai/manage-apike
 
 | Model | Description |
 |---|---|
-| `glm-5.2[1m]` | Flagship with 1M context (default) |
-| `glm-5.2` | Flagship, standard context |
+| `glm-5.3[1m]` | Flagship (default) — 1M context, text-only |
+| `glm-5.3-flash` | Fast, multimodal, cheapest — 1M context |
 | `glm-4.7` | Fast, great for coding |
-| `glm-4.5-air` | Lightweight, cheapest |
 
-The `[1m]` variant opts into the 1M-token context window; `claude-z` sets `CLAUDE_CODE_AUTO_COMPACT_WINDOW=1000000` for it automatically.
+GLM-5.3 models have a 1M context window natively; the `[1m]` suffix tells Claude Code to use the full window (it sets `CLAUDE_CODE_AUTO_COMPACT_WINDOW=1000000` automatically).
 
 ### claude-o — OpenRouter: 400+ models, pay-per-token
 

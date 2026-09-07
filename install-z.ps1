@@ -55,19 +55,17 @@ switch ($choice) {
 # 3. Model
 Write-Host ""
 Write-Host "  Base model:"
-Write-Host "    1) glm-5.2[1m]  -- flagship, 1M context (default)"
-Write-Host "    2) glm-5.2      -- flagship, standard context"
-Write-Host "    3) glm-4.7      -- fast, great for coding"
-Write-Host "    4) glm-4.5-air  -- lightweight, cheapest"
+Write-Host "    1) glm-5.3[1m]     -- flagship, 1M context (default)"
+Write-Host "    2) glm-5.3-flash   -- fast, multimodal, cheapest"
+Write-Host "    3) glm-4.7         -- fast, great for coding"
 Write-Host ""
-$choice = Read-Host "  Choose [1/2/3/4] (default: 1)"
+$choice = Read-Host "  Choose [1/2/3] (default: 1)"
 if (-not $choice) { $choice = "1" }
 switch ($choice) {
-    "1" { $modelOpus = "glm-5.2[1m]"; $modelSonnet = "glm-5.2[1m]"; $modelHaiku = "glm-4.7" }
-    "2" { $modelOpus = "glm-5.2";     $modelSonnet = "glm-5.2";     $modelHaiku = "glm-4.7" }
-    "3" { $modelOpus = "glm-4.7";     $modelSonnet = "glm-4.7";     $modelHaiku = "glm-4.7" }
-    "4" { $modelOpus = "glm-4.5-air"; $modelSonnet = "glm-4.5-air"; $modelHaiku = "glm-4.5-air" }
-    default { Write-Host "  Invalid choice, using glm-5.2[1m]"; $modelOpus = "glm-5.2[1m]"; $modelSonnet = "glm-5.2[1m]"; $modelHaiku = "glm-4.7" }
+    "1" { $modelOpus = "glm-5.3[1m]";   $modelSonnet = "glm-5.3[1m]";   $modelHaiku = "glm-5.3-flash" }
+    "2" { $modelOpus = "glm-5.3-flash"; $modelSonnet = "glm-5.3-flash"; $modelHaiku = "glm-5.3-flash" }
+    "3" { $modelOpus = "glm-4.7";       $modelSonnet = "glm-4.7";       $modelHaiku = "glm-4.7" }
+    default { Write-Host "  Invalid choice, using glm-5.3[1m]"; $modelOpus = "glm-5.3[1m]"; $modelSonnet = "glm-5.3[1m]"; $modelHaiku = "glm-5.3-flash" }
 }
 
 # 4. Max tokens
