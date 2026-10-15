@@ -19,7 +19,7 @@ Pick the provider(s) you want:
 ### Linux / macOS
 
 ```bash
-git clone https://github.com/Glaveily/claude-z.git
+git clone https://github.com/yiwang/claude-z.git
 cd claude-z
 bash install-z.sh   # Z.ai
 bash install-o.sh   # OpenRouter
@@ -29,7 +29,7 @@ bash install-k.sh   # Kimi
 ### Windows
 
 ```
-git clone https://github.com/Glaveily/claude-z.git
+git clone https://github.com/yiwang/claude-z.git
 cd claude-z
 install-z.cmd   :: Z.ai
 install-o.cmd   :: OpenRouter
@@ -58,6 +58,9 @@ claude-z --verbose
 
 # Change settings anytime
 claude-k reconfig
+
+# Use another Claude Code config dir: its sessions, settings and history
+CLAUDE_CONFIG_DIR=~/.claude-work claude-k --resume <session-id>
 ```
 
 Your regular `claude` command is **not affected** — it still uses Anthropic directly.
@@ -100,12 +103,17 @@ Each command is a thin wrapper around `claude`. It sets environment variables fr
 | Variable | claude-z | claude-o | claude-k |
 |---|---|---|---|
 | `ANTHROPIC_BASE_URL` | `https://api.z.ai/api/anthropic` | `https://openrouter.ai/api` | `https://api.kimi.com/coding/` |
-| `ANTHROPIC_AUTH_TOKEN` | Your Z.ai key | Your OpenRouter key | _(not set)_ |
-| `ANTHROPIC_API_KEY` | _(not set)_ | `""` (blank, required) | Your Kimi key |
+| `ANTHROPIC_AUTH_TOKEN` | Your Z.ai key | Your OpenRouter key | Your Kimi key |
+| `ANTHROPIC_API_KEY` | _(unset)_ | `""` (blank, required) | _(unset)_ |
 | `ANTHROPIC_DEFAULT_OPUS/SONNET/HAIKU_MODEL` | Your GLM models | Your model IDs | Your Kimi model |
-| `ANTHROPIC_MODEL` + `CLAUDE_CODE_SUBAGENT_MODEL` | _(not set)_ | _(not set)_ | Your Kimi model |
+| `ANTHROPIC_MODEL` + `ANTHROPIC_DEFAULT_FABLE_MODEL` | Your opus model | Your opus model | Your Kimi model |
+| `CLAUDE_CODE_SUBAGENT_MODEL` | _(not set)_ | _(not set)_ | Your Kimi model |
 | `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC` | `1` | _(not set)_ | _(not set)_ |
 | Context window vars | `1000000` for `[1m]` models | _(not set)_ | `1048576` / `262144` per model |
+
+Each sends your key as `ANTHROPIC_AUTH_TOKEN`, which Claude Code always uses ahead of a claude.ai login and never asks about. (claude-k used to send `ANTHROPIC_API_KEY`. Claude Code asks once per config dir whether to use that, with No preselected, and after a No it sends the config dir's claude.ai login token to the provider instead.)
+
+`ANTHROPIC_MODEL` is pinned so that a `"model"` setting in the config dir's `settings.json`, such as `"fable"`, can't send a Claude model name to the provider.
 
 ## Requirements
 
@@ -145,7 +153,11 @@ One config per command, editable manually or via `claude-x reconfig`:
 
 (chmod 600 on Linux/macOS)
 
-## Upgrading from the old combined claude-z
+## Upgrading
+
+The installers copy the scripts, so after a `git pull` re-run the installer, or copy the script over the installed one (for example `cp claude-k.sh ~/.local/bin/claude-k`) to keep your config.
+
+### From the old combined claude-z
 
 Older versions had a single `claude-z` with a provider switch. Z.ai configs keep working as-is. If you used OpenRouter through the old `claude-z`, run `install-o` (or `claude-o reconfig`) and re-enter your key and model ID.
 

@@ -118,7 +118,11 @@ else
 fi
 
 export ANTHROPIC_BASE_URL="https://api.kimi.com/coding/"
-export ANTHROPIC_API_KEY="$CK_API_KEY"
+# Send the key as a bearer token, which Claude Code always prefers to a claude.ai login.
+# As ANTHROPIC_API_KEY it asks once per config dir whether to use it, with No preselected,
+# and after a No it sends that config dir's claude.ai login token to this URL instead.
+export ANTHROPIC_AUTH_TOKEN="$CK_API_KEY"
+unset ANTHROPIC_API_KEY
 
 export ANTHROPIC_MODEL="$CK_MODEL"
 export ANTHROPIC_DEFAULT_FABLE_MODEL="$CK_MODEL"

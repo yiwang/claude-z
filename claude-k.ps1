@@ -139,7 +139,11 @@ $model = if ($config.CK_MODEL) { $config.CK_MODEL } else { "k3[1m]" }
 $contextWindow = if ($model -eq "k3[1m]") { "1048576" } else { "262144" }
 
 $env:ANTHROPIC_BASE_URL = "https://api.kimi.com/coding/"
-$env:ANTHROPIC_API_KEY = $config.CK_API_KEY
+# Send the key as a bearer token, which Claude Code always prefers to a claude.ai login.
+# As ANTHROPIC_API_KEY it asks once per config dir whether to use it, with No preselected,
+# and after a No it sends that config dir's claude.ai login token to this URL instead.
+$env:ANTHROPIC_AUTH_TOKEN = $config.CK_API_KEY
+Remove-Item Env:ANTHROPIC_API_KEY -ErrorAction SilentlyContinue
 
 $env:ANTHROPIC_MODEL = $model
 $env:ANTHROPIC_DEFAULT_FABLE_MODEL = $model

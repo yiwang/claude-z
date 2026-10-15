@@ -145,6 +145,10 @@ $env:API_TIMEOUT_MS = "3000000"
 $env:ANTHROPIC_DEFAULT_OPUS_MODEL = $config.CO_MODEL_OPUS
 $env:ANTHROPIC_DEFAULT_SONNET_MODEL = if ($config.CO_MODEL_SONNET) { $config.CO_MODEL_SONNET } else { $config.CO_MODEL_OPUS }
 $env:ANTHROPIC_DEFAULT_HAIKU_MODEL = if ($config.CO_MODEL_HAIKU) { $config.CO_MODEL_HAIKU } else { $config.CO_MODEL_OPUS }
+# Pin the main model too: a config dir whose settings.json picks a model (e.g. "fable")
+# would otherwise send that Claude model name to OpenRouter
+$env:ANTHROPIC_MODEL = $config.CO_MODEL_OPUS
+$env:ANTHROPIC_DEFAULT_FABLE_MODEL = $config.CO_MODEL_OPUS
 
 if ($config.CO_MAX_TOKENS) {
     $env:CLAUDE_CODE_MAX_OUTPUT_TOKENS = $config.CO_MAX_TOKENS

@@ -145,6 +145,8 @@ if (-not (Get-Command claude -ErrorAction SilentlyContinue)) {
 
 $env:ANTHROPIC_BASE_URL = "https://api.z.ai/api/anthropic"
 $env:ANTHROPIC_AUTH_TOKEN = $config.CZ_API_KEY
+# An Anthropic API key from your environment would otherwise be sent to Z.ai as well
+Remove-Item Env:ANTHROPIC_API_KEY -ErrorAction SilentlyContinue
 
 $env:API_TIMEOUT_MS = "3000000"
 $env:CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1"
@@ -153,6 +155,10 @@ $modelOpus = if ($config.CZ_MODEL_OPUS) { $config.CZ_MODEL_OPUS } else { "glm-5.
 $env:ANTHROPIC_DEFAULT_OPUS_MODEL = $modelOpus
 $env:ANTHROPIC_DEFAULT_SONNET_MODEL = if ($config.CZ_MODEL_SONNET) { $config.CZ_MODEL_SONNET } else { "glm-5.3[1m]" }
 $env:ANTHROPIC_DEFAULT_HAIKU_MODEL = if ($config.CZ_MODEL_HAIKU) { $config.CZ_MODEL_HAIKU } else { "glm-5.3-flash" }
+# Pin the main model too: a config dir whose settings.json picks a model (e.g. "fable")
+# would otherwise send that Claude model name to Z.ai
+$env:ANTHROPIC_MODEL = $modelOpus
+$env:ANTHROPIC_DEFAULT_FABLE_MODEL = $modelOpus
 
 # Models with a 1M context window get a larger auto-compact window
 if ($modelOpus.Contains("[1m]")) {

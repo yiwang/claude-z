@@ -117,6 +117,10 @@ export API_TIMEOUT_MS="3000000"
 export ANTHROPIC_DEFAULT_OPUS_MODEL="${CO_MODEL_OPUS:-}"
 export ANTHROPIC_DEFAULT_SONNET_MODEL="${CO_MODEL_SONNET:-$CO_MODEL_OPUS}"
 export ANTHROPIC_DEFAULT_HAIKU_MODEL="${CO_MODEL_HAIKU:-$CO_MODEL_OPUS}"
+# Pin the main model too: a config dir whose settings.json picks a model (e.g. "fable")
+# would otherwise send that Claude model name to OpenRouter
+export ANTHROPIC_MODEL="$ANTHROPIC_DEFAULT_OPUS_MODEL"
+export ANTHROPIC_DEFAULT_FABLE_MODEL="$ANTHROPIC_DEFAULT_OPUS_MODEL"
 
 if [[ -n "${CO_MAX_TOKENS:-}" ]]; then
   export CLAUDE_CODE_MAX_OUTPUT_TOKENS="$CO_MAX_TOKENS"
