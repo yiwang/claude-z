@@ -1,5 +1,11 @@
 # claude-z / claude-o / claude-k
 
+> **This repo is archived.** `claude-z` and `claude-k` now live in
+> [claude-multi-account](https://github.com/yilab/claude-multi-account), which also runs them with
+> any Claude Code profile (`cl -z <profile>`, `cl -k <profile>`), shows which sessions ran on GLM or
+> Kimi, and reads the same config files, so an existing setup carries over. Its installer replaces
+> the copies these installers made. `claude-o` (OpenRouter) is only here.
+
 Run [Claude Code](https://docs.anthropic.com/en/docs/claude-code) with alternative API providers — [Z.ai](https://z.ai), [OpenRouter](https://openrouter.ai), or [Kimi](https://www.kimi.com/code).
 
 Each provider gets its own command, its own installer, and its own config file. Install one, two, or all three side by side.
